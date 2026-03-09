@@ -1,0 +1,171 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{microtype}
+\geometry{margin=1in}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\title{Sph\=o\d{t}a Architecture: A Zero-Data, Rule-Based Morpheme Tokenizer\\
+for Sanskrit Language Models}
+
+\author{Naga Dheeraj Santosh Kumar Kollipara \\
+\textit{Independent Researcher} \\
+\texttt{nagadheeraj.kollipara@gmail.com}}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Current large language models tokenize text using statistical subword algorithms (BPE, SentencePiece) that learn boundary rules from corpus frequency rather than linguistic structure. For Sanskrit --- a morphologically rich language with a formally complete grammar --- this produces systematic inefficiency: recent work documents approximately 2$\times$ fewer tokens under morpheme-aware tokenization compared to production tokenizers \citep{kumar2026}. We propose the Sph\=o\d{t}a Architecture: the first integration of P\={a}\d{n}ini's A\d{s}\d{t}\={a}dhy\={a}y\={i} as an ML preprocessing pipeline --- a deterministic, rule-based morpheme tokenizer requiring zero training data, provably complete for classical Sanskrit morphology, and producing unambiguous morpheme boundaries. We propose to benchmark against BPE and SentencePiece on the Digital Corpus of Sanskrit using morpheme boundary F1-score and vocabulary fertility. This work directly answers two recent open calls: \citet{srikant2025} benchmark existing LLMs on Sanskrit and call for a P\={a}\d{n}ini-based model without building one; \citet{kumar2026} documents the tokenization gap and calls for a grammar-aware tokenizer without providing one. We provide it. We additionally record Binary Matrix Glyphs --- a proposed machine-native 2D morpheme encoding designed for transformer attention geometry --- as a contemporaneous research direction to be developed separately.
+\end{abstract}
+
+\section{Introduction}
+
+Modern large language model tokenizers are statistical approximations. BPE \citep{sennrich2016} and SentencePiece \citep{kudo2018} learn subword merge rules from corpus frequency. This produces three compounding problems:
+
+\paragraph{Token inefficiency.} Morphologically rich languages are penalized under frequency-based tokenization. Sanskrit, with its agglutinative morphology and sandhi-based fusion, is split into fragments that do not correspond to meaningful units. A documented consequence: $\sim$2$\times$ token overhead vs.\ morpheme-aware tokenization, and up to 20$\times$ overhead when Sanskrit commentary is compared to its English equivalent \citep{kumar2026}.
+
+\paragraph{Boundary ambiguity.} Statistical tokenizers produce different splits for the same morpheme depending on context and training data distribution. Morpheme boundaries become probabilistic rather than linguistically grounded.
+
+\paragraph{Training data dependency.} A BPE tokenizer trained on Sanskrit requires a Sanskrit corpus. Sanskrit corpora are small ($\sim$4.8M morphologically annotated words in the Digital Corpus of Sanskrit, vs.\ hundreds of billions of tokens in English pretraining). Statistical tokenizers perform poorly on low-resource languages precisely where linguistically informed tokenizers would be most useful.
+
+We propose a different approach: derive the morpheme vocabulary not from corpus statistics but from P\={a}\d{n}ini's A\d{s}\d{t}\={a}dhy\={a}y\={i} --- a formal generative grammar of Sanskrit that produces every valid morphological form deterministically from $\sim$2,000 verbal roots. The vocabulary is compiled, not learned. It is complete, not approximate. It requires zero training data.
+
+\section{Related Work}
+
+\subsection{Statistical Morpheme Tokenizers}
+
+Morfessor \citep{virpioja2013} is the baseline for unsupervised morpheme segmentation. MorphPiece \citep{jabbar2023} demonstrates that linguistically motivated tokenization produces GPT-quality language models at approximately half the training iterations of BPE-GPT2. MorphBPE \citep{asgari2025} extends BPE with morphological awareness and consistently reduces cross-entropy loss at 300M and 1B parameter scales across English, Russian, Hungarian, and Arabic.
+
+These works validate the direction: morpheme-aligned tokenization outperforms frequency-based tokenization. The key distinction of our proposal is that MorphPiece and MorphBPE remain learned or hybrid approaches --- they still require training data to discover morpheme boundaries. Our tokenizer derives boundaries from formal grammar rules. The result is formally complete and requires zero training data.
+
+\subsection{Sanskrit NLP}
+
+TransLIST \citep{sandhan2022} is a transformer-based Sanskrit word segmenter achieving 7.2 points above state-of-the-art on perfect match metrics. TransLIST solves Sanskrit word segmentation as an NLP task; our work uses the P\={a}\d{n}inian morpheme space as a pretraining tokenizer vocabulary. These are different application domains.
+
+SanskritShala \citep{sandhan2023} provides state-of-the-art neural tools for word segmentation, morphological tagging, and dependency parsing. ByT5-Sanskrit \citep{byt5sanskrit2024} takes the opposite approach: byte-level encoding bypasses tokenization entirely. Where ByT5 argues for no tokens, we argue for richer, rule-derived tokens.
+
+The Sanskrit Heritage Platform \citep{huet2008} is the most rigorous existing computational implementation of P\={a}\d{n}ini's grammar. Unlike Heritage Platform's on-demand morphological analysis, this work pre-compiles the vocabulary as a closed set for LLM tokenization, trading runtime flexibility for deterministic preprocessing.
+
+\subsection{The Open Calls We Answer}
+
+Two papers explicitly identify the gap this work fills. \citet{srikant2025} benchmark existing LLMs on Sanskrit tasks, demonstrate their inadequacy, and argue for a P\={a}\d{n}ini sutra-based model without building one. \citet{kumar2026} quantitatively documents Sanskrit's token efficiency advantage and explicitly calls for ``a grammar and morphology-aware tokenizer leveraging P\={a}\d{n}ini's Sandhi and Vibhakti rules'' without providing one. We provide the concrete architecture.
+
+\section{Sanskrit as a Generative Rule System}
+
+The framing this work depends on: \textbf{Sanskrit is not a natural language in the relevant sense. It is a formal generative system that humans happen to be able to speak.}
+
+P\={a}\d{n}ini's A\d{s}\d{t}\={a}dhy\={a}y\={i} (circa 4th century BCE) contains 3,959 rules that, given any verbal root (dh\={a}tu) from the Dh\={a}tup\={a}\d{t}ha ($\sim$2,000 entries), deterministically generate every valid morphological form --- inflected verbs, declined nouns, compound words --- with zero ambiguity. \citet{kiparsky2009} demonstrates that this grammar is formally more powerful than context-free grammar --- ``contextualized replacement systems'' closer to Turing-equivalent in generative capacity. \citeauthor{huet2008}'s \citeyearpar{huet2008} computational implementation at INRIA confirms the rules are machine-executable today.
+
+\paragraph{The generative vs.\ accumulative distinction.} Natural languages like English accumulate vocabulary through borrowing. Sanskrit generates vocabulary from roots and suffixes according to formal rules. The meaning of every morpheme is derivable from its grammatical components, not from historical usage pattern.
+
+For a tokenizer, this means: the morpheme vocabulary does not need to be discovered from data. It is \textit{computed} from rules. The tokenizer is not trained. It is \textit{compiled}.
+
+\paragraph{A note on prior misrepresentation.} \citet{briggs1985} observed structural parallels between Sanskrit's k\={a}raka relations and 1985-era symbolic AI. This is a historical observation, not a rigorous proof of computational equivalence. The formal claims in this paper rest on \citet{kiparsky2009} and \citet{huet2008}.
+
+\section{The P\={a}\d{n}inian Tokenizer}
+
+\subsection{Architecture}
+
+A P\={a}\d{n}ini-compiled tokenizer operates as follows:
+
+\begin{enumerate}
+    \item The Dh\={a}tup\={a}\d{t}ha provides $\sim$2,000 root meanings as a finite lexicon
+    \item A\d{s}\d{t}\={a}dhy\={a}y\={i} rules generate all valid suffixed, prefixed, and compounded forms --- estimated at 50,000--200,000 unique morphemes depending on compound depth
+    \item Sandhi rules deterministically resolve morpheme boundary transformations at junctions
+    \item The result is a complete, closed, unambiguous morpheme vocabulary --- built once, never retrained
+\end{enumerate}
+
+This is the logical endpoint of the trajectory established by MorphPiece and MorphBPE: if morpheme-aware tokenization consistently outperforms frequency-based tokenization, the formally complete, zero-data case is where that trajectory terminates.
+
+\subsection{Limitations --- Sandhi Accuracy}
+
+P\={a}\d{n}inian tokenization requires sandhi splitting as a prerequisite. Current benchmarks \citep{bhardwaj2018} show best-performing tools achieve approximately 70--82\% accuracy across sandhi splitting and merging tasks, with the INRIA tool reaching $\sim$82\% on merging and $\sim$71\% on splitting on the largest corpus tested. Approximately 1 in 5 compound splits contains an error.
+
+This is a real limitation and is acknowledged as such. It is an engineering challenge --- recent neural tools \citep{sandhan2022} improve on these baselines --- not a fundamental flaw in the P\={a}\d{n}inian vocabulary proposal. \textbf{Morpheme vocabulary construction is zero-training-data and formally complete; sandhi pre-processing relies on probabilistic splitting tools with documented accuracy.}
+
+\subsection{Why Sanskrit and Not Turkish or Finnish?}
+
+Morphologically rich languages exist beyond Sanskrit. The answer is not that Sanskrit is morphologically superior. It is that P\={a}\d{n}ini's grammar is uniquely positioned computationally:
+
+\begin{enumerate}
+    \item \textbf{Formal completeness}: P\={a}\d{n}ini's grammar is documented as formally complete for classical Sanskrit morphology \citep{kiparsky2009,huet2008}. No other living or classical language has an equivalent.
+    \item \textbf{Zero statistical learning required}: The grammar is rules, not data. Morfessor-style learning is still required for Turkish, Finnish, and Arabic.
+    \item \textbf{Existing implementation}: The Heritage Platform \citep{huet2008} and SanskritNLP provide working infrastructure.
+\end{enumerate}
+
+The framework is potentially generalizable. The first application is Sanskrit because the tools exist.
+
+\subsection{Counterarguments}
+
+\paragraph{``Existing analyzers already exist. This is redundant.''}
+Those analyzers are built for NLP parsing tasks. This work compiles a closed, pre-tokenization morpheme vocabulary for LLM preprocessing. Different application domain. Not redundant.
+
+\paragraph{``Sandhi accuracy makes this unusable.''}
+Modern neural tools achieve near-99\% on word segmentation \citep{sandhan2022}. The vocabulary design is formally complete; the pre-processing step is an engineering constraint with improving accuracy.
+
+\paragraph{``This only works for classical Sanskrit.''}
+Correct. Scope is explicitly classical Sanskrit. This is a feature of formal scoping, not a limitation of the approach.
+
+\paragraph{``50,000--200,000 morphemes inflates embedding tables.''}
+Fewer tokens per word (estimated 1.1--1.3 vs.\ 1.8--1.9 for BPE) reduces attention cost per forward pass. The embedding table trade-off is an empirical question addressed by Experiment 2.
+
+\paragraph{```Provably complete' is too strong.''}
+The claim is bounded to classical Sanskrit morphology as defined by P\={a}\d{n}ini's A\d{s}\d{t}\={a}dhy\={a}y\={i}. Out-of-scope forms fall back to UNK handling --- the same behavior as BPE on out-of-vocabulary items.
+
+\bigskip
+\noindent\textit{Timestamp (2026-03-09): This work additionally conceives of Binary Matrix Glyphs (BMGs) --- a machine-native 2D spatial encoding where each morpheme is assigned a unique $N{\times}N$ binary matrix with grammatical role encoded in spatial cell position, designed for transformer attention geometry rather than human visual reading. Recorded here as originating contemporaneously with this proposal. Developed separately as future work.}
+
+\section{Proposed Experiments}
+
+\paragraph{Experiment 1 --- Tokenizer benchmark} \textit{(weeks, no GPU required.)}
+Tokenize the Digital Corpus of Sanskrit (4.8M words) with (a) BPE, (b) SentencePiece, (c) P\={a}\d{n}ini tokenizer via SanskritNLP. Measure: morpheme boundary F1-score, vocabulary fertility (tokens per word), token count per sentence. This is the minimum experiment that makes this paper empirical rather than a proposal.
+
+\paragraph{Experiment 2 --- Small LM training} \textit{(months, GPU required.)}
+Train a small language model (1M--7M parameters) on Sanskrit-tokenized text. Compare perplexity and morphological accuracy vs.\ a BPE-tokenized baseline.
+
+\paragraph{Experiment 3 --- Bias benchmarking} \textit{(months, GPU required.)}
+Run standard bias benchmarks (WEAT, StereoSet) on models trained with Sanskrit vs.\ English substrate.
+
+\section{Implications}
+
+If the P\={a}\d{n}inian tokenizer produces measurably better morpheme boundaries, three downstream consequences follow:
+
+\textbf{Reduced hallucination for Sanskrit.} Outputs constrained by formal grammar are less likely to produce grammatically invalid Sanskrit.
+
+\textbf{Lower resource requirement.} MorphPiece \citep{jabbar2023} shows morpheme-aligned tokenizers achieve comparable LLM quality at half the training iterations. A formally complete Sanskrit tokenizer may reduce the training data requirement.
+
+\textbf{A template for other formally documented languages.} Sanskrit is the first case because the tools exist. The framework extends to any language with a formally documented grammar implemented computationally.
+
+\section{Future Directions}
+
+\textbf{Machine-native encoding.} Binary Matrix Glyphs --- a machine-native 2D morpheme encoding where grammatical role is encoded in spatial cell position for transformer attention --- are proposed as a separate research direction originating from this work.
+
+\textbf{Fractal compositional depth.} Each morpheme representation carrying meaning at multiple resolutions, with etymological structure at 2$\times$, semantic field at 4$\times$. Relevant prior art: \citet{kusupati2022} and \citet{nawrot2022}.
+
+\textbf{Sapir-Whorf for AI.} Does the training substrate shape what internal representations are easy to learn? Training a model on a formally generative substrate is an extreme test of this hypothesis.
+
+\textbf{Sanskrit corpus expansion.} The current Digital Corpus of Sanskrit ($\sim$4.8M words) is insufficient for full LLM pretraining. Corpus expansion --- including synthetic generation from A\d{s}\d{t}\={a}dhy\={a}y\={i} rules --- is a downstream prerequisite.
+
+\section{Conclusion}
+
+We propose the Sph\=o\d{t}a Architecture: the first integration of P\={a}\d{n}ini's A\d{s}\d{t}\={a}dhy\={a}y\={i} as an ML preprocessing pipeline --- a zero-training-data, formally complete, rule-based morpheme tokenizer for Sanskrit language models. This work answers an explicit open call from two recent papers \citep{srikant2025,kumar2026} that document the need without providing the architecture. The tokenizer is buildable today with existing open-source tools. We release this proposal openly to accelerate its realization.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
