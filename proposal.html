@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Proposal — Sphoṭa</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <canvas id="canvas-bg"></canvas>
+  <div class="grain"></div>
+
+  <nav>
+    <div class="nav-brand">
+      <span class="nav-glyph">स्फोट</span>
+      <span class="nav-org">Founders of Future</span>
+    </div>
+    <div class="nav-right">
+      <div class="lang-switcher" role="navigation" aria-label="Language">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="hi">हि</button>
+        <button class="lang-btn" data-lang="ta">த</button>
+        <button class="lang-btn" data-lang="te">తె</button>
+      </div>
+      <button class="nav-hamburger" id="nav-toggle" aria-label="Menu">☰</button>
+      <div class="nav-links-group" id="nav-links">
+        <a href="index.html" class="nav-link">← Back to site</a>
+        <a href="https://github.com/lzylabs/sansqrit" target="_blank" class="nav-link">GitHub ↗</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero hero-slim">
+    <div class="hero-inner hero-inner-single">
+      <div>
+        <p style="font-size: 12px; letter-spacing: 0.12em; color: var(--text-dimmer); font-family: var(--font-mono); margin-bottom: 20px; text-transform: uppercase;">
+          <a href="index.html" style="color: var(--text-dimmer); text-decoration: none;">Sphoṭa</a>
+          <span style="margin: 0 8px; opacity: 0.4;">›</span>
+          Plain Language Proposal
+        </p>
+        <p class="eyebrow">The Proposal · Plain English · Sphoṭa Architecture</p>
+        <h1 class="title" style="font-size: clamp(40px, 6vw, 72px); margin-bottom: 24px;">
+          What this is, in plain language.
+        </h1>
+        <p class="subtitle">
+          Sanskrit's 2,500-year-old grammar rules can replace the guesswork
+          at the heart of modern AI language models.
+          Here is what that means, without the jargon.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE PROBLEM -->
+  <section class="section dark">
+    <div class="container narrow">
+      <span class="section-label">The Problem</span>
+      <h2>AI splits words by guessing.</h2>
+      <p class="section-sub">
+        Every AI language model starts with a step called tokenization — breaking text into pieces
+        before it can process it. The way almost every model does this is the problem.
+      </p>
+
+      <div class="story-steps">
+        <div class="story-step">
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <h3>What a tokenizer does</h3>
+            <p>
+              Before an AI can read a sentence, it breaks it into chunks called tokens.
+              These tokens are the building blocks the model learns from.
+              How you break a word apart changes what the model understands about it.
+            </p>
+          </div>
+        </div>
+
+        <div class="story-step">
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <h3>How current AI models do it: statistical guessing</h3>
+            <p>
+              The tokenizer used by GPT, LLaMA, and most major AI models is called BPE
+              (Byte Pair Encoding). It works by scanning billions of words and asking:
+              <em>which sequences of letters appear together most often?</em>
+              It learns to split words based on frequency — not meaning.
+            </p>
+            <p>
+              The word "unbreakable" might get split into <em>un · break · able</em> when the model
+              is lucky, or into <em>unbr · eak · able</em> when it is not. The model has no idea
+              what a root word is, what a prefix means, or why the split happened.
+              It is pattern-matching, not understanding.
+            </p>
+          </div>
+        </div>
+
+        <div class="story-step">
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <h3>Why this matters: more guesses = more compute = more cost</h3>
+            <p>
+              Every token is a unit of computation. When a tokenizer splits one meaningful word
+              into three arbitrary fragments, the model has to do three times the work to
+              reconstruct a meaning it never had to lose in the first place.
+            </p>
+            <p>
+              For Sanskrit — a language with very dense, information-rich words — current
+              tokenizers produce up to 20 times more tokens than necessary.
+              A January 2026 paper formally documented this and called for a better approach.
+              No one has built one yet.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE INSIGHT -->
+  <section class="section">
+    <div class="container narrow">
+      <span class="section-label">The Insight</span>
+      <h2>Sanskrit was designed like a programming language.</h2>
+
+      <div class="story-steps">
+        <div class="story-step">
+          <div class="step-num">→</div>
+          <div class="step-body">
+            <h3>Most languages are historical accidents</h3>
+            <p>
+              English borrows from Latin, French, German, Arabic, and dozens of other languages.
+              Words carry centuries of history, migration, and cultural sediment.
+              "Hamburger" carries Hamburg. "Algebra" carries the Arabic <em>al-jabr</em>.
+              The vocabulary was never designed — it accumulated.
+            </p>
+          </div>
+        </div>
+
+        <div class="story-step">
+          <div class="step-num">→</div>
+          <div class="step-body">
+            <h3>Sanskrit is different: it was generated from rules</h3>
+            <p>
+              Around 400 BCE, a grammarian named Pāṇini wrote the Ashtadhyayi —
+              3,959 rules that generate every valid Sanskrit word from approximately
+              2,000 root forms. Deterministically. No exceptions.
+            </p>
+            <p>
+              Take <em>kartavyam</em> — "that which must be done." It is not borrowed
+              from another language or shaped by cultural usage. It is derived: root
+              <em>kṛ</em> (to do) + suffix <em>tavya</em> (obligation, necessity) +
+              <em>m</em> (neuter nominative case marker). A moral weight encoded in morphology.
+              Every split carries meaning. Every split is derivable from rules.
+              Pāṇini's grammar did not describe Sanskrit — it generated it.
+            </p>
+          </div>
+        </div>
+
+        <div class="story-step">
+          <div class="step-num">→</div>
+          <div class="step-body">
+            <h3>This is structurally identical to a compiler</h3>
+            <p>
+              A compiler takes source code and turns it into machine instructions, deterministically,
+              from a formal set of rules. Pāṇini's grammar does the same thing for language:
+              given a root and a grammatical role, it outputs the correct word form.
+              Every time. Without training data.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE PROPOSAL -->
+  <section class="section dark">
+    <div class="container narrow">
+      <span class="section-label">The Proposal</span>
+      <h2>Use Pāṇini's rules to build the tokenizer.</h2>
+
+      <div class="story-steps">
+        <div class="story-step">
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <h3>The Sphoṭa Architecture: a rule-based tokenizer</h3>
+            <p>
+              The Sphoṭa Architecture proposes building a tokenizer for Sanskrit AI models
+              that uses Pāṇini's 3,959 rules instead of statistical frequency patterns.
+              Every token in the vocabulary would be a real unit of meaning —
+              a root, a prefix, a suffix, a grammatical marker.
+              Derived from rules, not learned from data.
+            </p>
+          </div>
+        </div>
+
+        <div class="story-step">
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <h3>Zero training data required for tokenizer construction</h3>
+            <p>
+              Current tokenizers need to be trained on billions of words to learn their
+              splitting patterns. The Sphoṭa tokenizer would need none — because the
+              rules already exist. They have existed for 2,500 years.
+              The grammar is the training data.
+            </p>
+          </div>
+        </div>
+
+        <div class="story-step">
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <h3>The benchmark this paper invites</h3>
+            <p>
+              Paper 1 proposes a concrete, falsifiable experiment:
+              run the Pāṇini-based tokenizer against the standard statistical tokenizer
+              on a Sanskrit corpus (the Digital Corpus of Sanskrit — 4.8 million words).
+              Measure token count, coverage, and downstream model performance.
+              The hypothesis is that the Pāṇini tokenizer produces fewer, more
+              semantically meaningful tokens.
+            </p>
+            <p>
+              The experiment has not been run yet. That is the invitation.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY IT MATTERS -->
+  <section class="section">
+    <div class="container narrow">
+      <span class="section-label">Why It Matters</span>
+      <h2>Three levels of consequence.</h2>
+
+      <div class="cards">
+        <div class="card card-wide">
+          <div class="card-num">First order</div>
+          <h3>A better AI for Sanskrit — immediately</h3>
+          <p>
+            A grammar-aware tokenizer produces up to 20× fewer tokens for dense Sanskrit
+            commentary, and roughly 2× fewer for standard text — documented in arXiv 2601.06142
+            (January 2026). The 20× figure matters: it is what makes classical Sanskrit
+            corpora tractable for AI without the compute costs current tokenizers impose.
+            The roughly 25,000 active Sanskrit users today, and the millions of classical texts
+            never well-processed by AI, stand to benefit immediately.
+          </p>
+        </div>
+
+        <div class="card card-wide">
+          <div class="card-num">Second order</div>
+          <h3>A substrate for all 23 Indian languages</h3>
+          <p>
+            Most Indian languages are morphologically related to Sanskrit —
+            they share root structures, grammatical patterns, and derivational logic.
+            A formally complete Sanskrit tokenizer creates a foundation for grammar-aware
+            tokenizers for Hindi, Tamil, Telugu, Kannada, and 19 other official Indian languages.
+            Better AI for 1.4 billion people, without requiring massive new training corpora.
+          </p>
+        </div>
+
+        <div class="card card-wide">
+          <div class="card-num">Third order</div>
+          <h3>A question about how language shapes AI reasoning</h3>
+          <p>
+            In humans, the language you speak influences what distinctions feel natural to make.
+            Russian speakers distinguish light blue and dark blue faster because they have
+            separate words for them. This is called the Sapir-Whorf effect.
+          </p>
+          <p>
+            If this effect applies to AI — if the substrate language shapes what representations
+            are easy to learn — then a formally generative substrate may produce models that
+            reason about causality, relationship, and meaning differently than models trained
+            on statistical approximations of English. This is testable. The experiment has not
+            been run.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORIGIN STORY -->
+  <section class="section dark">
+    <div class="container narrow">
+      <span class="section-label">How It Started</span>
+      <h2>One line that wouldn't leave.</h2>
+
+      <div class="story-steps">
+        <div class="story-step">
+          <div class="step-num">2023</div>
+          <div class="step-body">
+            <h3>An ashram in South India</h3>
+            <p>
+              Dheeraj was at Dayanand Ashram — a six-month Advaita Vedanta residential program.
+              He wandered into a Sanskrit class he didn't belong to. He stayed only a short while.
+              But one line from the teacher stayed with him for years:
+            </p>
+            <p>
+              <em>"In Sanskrit, every single sound — not even a syllable, even a half syllable —
+              carries meaning."</em>
+            </p>
+            <p>
+              No framework for it yet. But it didn't leave.
+            </p>
+          </div>
+        </div>
+
+        <div class="story-step">
+          <div class="step-num">2025</div>
+          <div class="step-body">
+            <h3>Sanskrit, AI, and the moment it clicked</h3>
+            <p>
+              In Tirupati, using AI as a Sanskrit teacher, something became clear that no one
+              had made explicit before: Pāṇini's grammar is not a description of a language —
+              it is a generative system. Rules first. Like a programming language.
+              You don't memorize Sanskrit words. You derive them.
+            </p>
+            <p>
+              Then DeepSeek published results showing Chinese's denser tokens gave an
+              inference speed advantage over English. The implication was immediate:
+              if Chinese beats English because it is denser, Sanskrit beats Chinese —
+              and unlike Chinese, Sanskrit's token boundaries are derivable from first principles.
+            </p>
+          </div>
+        </div>
+
+        <div class="story-step">
+          <div class="step-num">2026</div>
+          <div class="step-body">
+            <h3>Confirmed at the Auroville Literature Festival</h3>
+            <p>
+              At the Auroville Literature Festival, Dheeraj sat with Sridhar Vembu —
+              founder of Zoho Corporation, one of India's most serious technologists.
+              He asked: given that Sanskrit is a generative language, could it serve as the
+              foundation for the next generation of AI research?
+            </p>
+            <p>
+              Vembu's answer: that is exactly what their Kerala lab is pursuing — independently.
+              The question Dheeraj had been carrying for three years was already being worked on.
+              That was the signal to stop floating the idea and start formalising it.
+            </p>
+            <a href="https://youtu.be/uBN-KmPW50M?t=4712" target="_blank" class="story-link"
+               style="display:inline-block; margin-top:12px; font-size:13px; letter-spacing:0.05em;">
+              Watch the exchange at 1:18:33 ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINKS -->
+  <section class="section" id="collaborate">
+    <div class="container narrow">
+      <span class="section-label">Read More · Collaborate</span>
+      <h2>This is a proposal, not a proof.</h2>
+      <p class="collab-ask">
+        If this catches your interest — and you have a complementary skill set that could
+        help further this research in any way — please don't hesitate to reach out.
+      </p>
+      <div class="collab-links">
+        <a href="https://github.com/lzylabs/sansqrit" target="_blank" class="btn">Read the paper draft ↗</a>
+        <a href="mailto:contact@lzylabs.in" class="btn btn-ghost">Write to Dheeraj ↗</a>
+        <a href="index.html" class="btn btn-ghost">Full research site ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <span class="footer-glyph">स्फोट</span>
+      <div class="footer-links">
+        <a href="index.html">Research Site</a>
+        <a href="https://github.com/lzylabs/sansqrit" target="_blank">GitHub</a>
+        <a href="mailto:contact@lzylabs.in">Contact</a>
+      </div>
+      <p class="footer-note">
+        Sphoṭa (Sanskrit: स्फोट) — Bhartrihari's 5th-century concept of the
+        indivisible meaning-unit that "bursts" into phonemic expression.
+        This architecture proposes encoding at that level.
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

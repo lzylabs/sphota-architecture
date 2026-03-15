@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Sphoṭa Proposal — Plain Language</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .btn-disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .references-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .references-list li {
+      border-left: 2px solid rgba(200,169,122,0.3);
+      padding-left: 1.25rem;
+      color: #888;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .references-list li strong {
+      color: #c8a97a;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+    .verified-note {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: rgba(200,169,122,0.45);
+      font-style: italic;
+    }
+    .claim-box {
+      border: 1px solid rgba(200,169,122,0.3);
+      border-radius: 8px;
+      padding: 2rem 2.5rem;
+      background: rgba(200,169,122,0.04);
+      margin: 2rem 0;
+    }
+    .claim-box p {
+      font-size: 1.1rem;
+      line-height: 1.75;
+      color: #d8b87a;
+      margin: 0;
+    }
+    .proven-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    .proven-badge.verified { background: rgba(80,160,80,0.15); color: #7ecf7e; }
+    .proven-badge.partial  { background: rgba(200,140,40,0.15); color: #d4a44c; }
+    .proven-badge.untested { background: rgba(120,120,140,0.15); color: #9090a8; }
+    .status-row {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .status-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: start;
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .status-item p { margin: 0.25rem 0 0; font-size: 0.88rem; color: #888; line-height: 1.5; }
+    .status-item h4 { margin: 0; font-size: 0.95rem; color: #c8a97a; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <div class="grain"></div>
+
+  <nav>
+    <div class="nav-brand">
+      <span class="nav-glyph">&#x0938;&#x094D;&#x092B;&#x094B;&#x091F;</span>
+      <span class="nav-org">Founders of Future</span>
+    </div>
+    <div class="nav-right">
+      <div class="lang-switcher" role="navigation" aria-label="Language">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="hi">&#x939;&#x93F;</button>
+        <button class="lang-btn" data-lang="ta">&#xBA4;</button>
+        <button class="lang-btn" data-lang="te">&#x0C24;&#x0C46;</button>
+      </div>
+      <a href="index.html" class="nav-link">&#x2190; Back</a>
+      <a href="https://github.com/lzylabs/sansqrit" target="_blank" class="nav-link">GitHub &#x2197;</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" style="min-height:40vh;">
+    <div class="hero-inner" style="align-items:flex-start; padding-top:6rem;">
+      <div style="max-width:760px;">
+        <p class="eyebrow">The Sphoṭa Proposal &middot; Plain Language &middot; 2026</p>
+        <h1 class="title" style="font-size:clamp(2.5rem,6vw,4.5rem);">The Proposal,<br/>No Jargon.</h1>
+        <p class="subtitle">
+          What we are claiming. What has been verified.<br/>
+          What remains to be tested. Links to the full paper below.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORE CLAIM -->
+  <section class="section dark" id="claim">
+    <div class="container narrow">
+      <span class="section-label">The Core Claim</span>
+      <h2>One sentence.</h2>
+
+      <div class="claim-box">
+        <p>
+          We propose and implement the first tokenizer for Sanskrit that is
+          <strong>compiled from grammar rules</strong> — not learned from data.
+          Every token it produces is a real unit of meaning, derived from
+          Pāṇini's 3,959-rule grammar system written around 400 BCE.
+          We then benchmark it against today's standard tokenizers to show
+          it works better for Sanskrit.
+        </p>
+      </div>
+
+      <p>
+        A tokenizer is the first thing an AI language model does: it breaks text into pieces
+        called tokens before any learning happens. Today's tokenizers (BPE, SentencePiece)
+        figure out which pieces to use by looking at billions of words and asking
+        <em>"what sequences of letters show up together most often?"</em>
+        They have no idea what words mean. They just find patterns.
+      </p>
+      <p>
+        Sanskrit does not need this. Pāṇini already wrote down the complete grammar —
+        every valid Sanskrit word can be derived from around 2,000 roots using his rules.
+        Deterministically. No data needed. The grammar is a compiler.
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT'S PROVEN -->
+  <section class="section" id="proven">
+    <div class="container">
+      <span class="section-label">What's Already Verified</span>
+      <h2>The foundation<br/>is solid.</h2>
+      <p class="section-sub">
+        Every claim below is supported by independently verifiable published work.
+        No AI-generated citations. All sources checked manually.
+      </p>
+
+      <div class="status-row">
+        <div class="status-item">
+          <div>
+            <h4>Sanskrit needs 2&times; fewer tokens than English for the same content</h4>
+            <p>A January 2026 paper (arXiv 2601.06142) measured this directly. For dense Sanskrit commentary, the advantage can reach 20&times;. Each Sanskrit token carries more meaning than an English one — by design, not by accident.</p>
+          </div>
+          <span class="proven-badge verified">Verified</span>
+        </div>
+
+        <div class="status-item">
+          <div>
+            <h4>Pāṇini's grammar is formally complete — and already runs as a computer program</h4>
+            <p>Gérard Huet (INRIA, France) built the Heritage Platform: Pāṇini's 3,959 rules implemented as working software. Paul Kiparsky (Stanford) showed the grammar is formally more powerful than most modern grammar frameworks. The foundation exists. We did not have to build it.</p>
+          </div>
+          <span class="proven-badge verified">Verified</span>
+        </div>
+
+        <div class="status-item">
+          <div>
+            <h4>The tools to build this exist today, for free</h4>
+            <p>SanskritNLP (Python library), SanskritShala (IIT Kharagpur, published at ACL 2023), and the Heritage Platform are all available, open, and documented. This is an engineering project, not a research moonshot.</p>
+          </div>
+          <span class="proven-badge verified">Verified</span>
+        </div>
+
+        <div class="status-item">
+          <div>
+            <h4>Two recent papers explicitly call for this — and neither builds it</h4>
+            <p>Srikant et al. (IntelliSys 2025) argues for a Pāṇini-based model. arXiv 2601.06142 (Jan 2026) documents Sanskrit's token efficiency and calls for a grammar-aware tokenizer. Both papers identify the gap. Neither fills it. This proposal fills it.</p>
+          </div>
+          <span class="proven-badge verified">Verified</span>
+        </div>
+
+        <div class="status-item">
+          <div>
+            <h4>Morpheme-based tokenizers already show LLM improvement (proxy evidence)</h4>
+            <p>MorphPiece (2023) trained an LLM using morpheme-based tokens — not Pāṇini, but general morphology — and got comparable quality to standard GPT-2 at half the training cost. This is the strongest available proxy that the approach will work.</p>
+          </div>
+          <span class="proven-badge verified">Verified</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT WE'RE BUILDING -->
+  <section class="section dark" id="building">
+    <div class="container narrow">
+      <span class="section-label">What We're Proposing to Build</span>
+      <h2>The tokenizer.<br/>Then the benchmark.</h2>
+
+      <p>
+        Step one: build a tokenizer that takes any Sanskrit text and splits it
+        into morphemes — the smallest meaningful units — using Pāṇini's rules.
+        Not by looking at frequency patterns. By applying grammar rules
+        the way a Sanskrit scholar would.
+      </p>
+      <p>
+        Step two: run it against BPE and SentencePiece (the two standard tokenizers
+        used in most AI models today) on the Digital Corpus of Sanskrit — 4.8 million words,
+        freely available. Measure three things: vocabulary size, how accurately morpheme
+        boundaries are found, and how many tokens are needed per sentence.
+      </p>
+      <p>
+        If the Pāṇinian tokenizer wins on morpheme boundary accuracy and token efficiency,
+        the case is made. That is all the first paper needs to establish.
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT'S STILL UNTESTED -->
+  <section class="section" id="untested">
+    <div class="container">
+      <span class="section-label">What's Still Being Tested</span>
+      <h2>Honest about<br/>what isn't proven yet.</h2>
+
+      <div class="status-row">
+        <div class="status-item">
+          <div>
+            <h4>The benchmark experiment has not been run yet</h4>
+            <p>This is the most important missing piece. The experiment is straightforward — days, not months, using free tools on a free dataset. We are looking for a collaborator to run it.</p>
+          </div>
+          <span class="proven-badge untested">Not yet run</span>
+        </div>
+
+        <div class="status-item">
+          <div>
+            <h4>Sanskrit word-splitting accuracy is 79.5% — not 100%</h4>
+            <p>Sanskrit has sandhi: words fuse at boundaries in complex ways. Current tools split correctly about 4 out of 5 times. This is an engineering problem with a known improvement trajectory (ByT5-Sanskrit, TransLIST). It is not a hole in the theory — it is a solvable limitation.</p>
+          </div>
+          <span class="proven-badge partial">Known limitation</span>
+        </div>
+
+        <div class="status-item">
+          <div>
+            <h4>Binary Matrix Glyphs are a future direction, not this paper</h4>
+            <p>The BMG system — encoding each morpheme as a 2D binary matrix for machine-native reading — is proposed as Paper 2. The first paper makes no claims about it beyond naming it as a research direction. The tokenizer stands entirely on its own.</p>
+          </div>
+          <span class="proven-badge untested">Paper 2</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- READ THE PAPER -->
+  <section class="section dark" id="paper-links">
+    <div class="container narrow" style="text-align:center;">
+      <span class="section-label">Read the Full Paper</span>
+      <h2>The technical paper<br/>and verified references.</h2>
+      <p>
+        The full draft is on GitHub. The arXiv preprint is in preparation —
+        seeking cs.CL endorsement before submission.
+      </p>
+      <div class="collab-links" style="justify-content:center; margin-top:2rem;">
+        <a href="https://github.com/lzylabs/sansqrit" target="_blank" class="btn">
+          Read the technical paper (GitHub) &#x2197;
+        </a>
+        <span class="btn btn-ghost btn-disabled">
+          arXiv preprint (coming soon)
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERIFIED REFERENCES -->
+  <section class="section" id="references">
+    <div class="container narrow">
+      <span class="section-label">Verified References</span>
+      <h2>What this is built on.</h2>
+      <p class="section-sub">
+        Every citation below was located, opened, and verified before being used.
+        No AI-generated references.
+      </p>
+
+      <ul class="references-list">
+        <li>
+          <strong>arXiv 2601.06142 (January 2026)</strong>
+          Documents Sanskrit's token efficiency advantage over English — 2&times; on average,
+          up to 20&times; for dense commentary. Explicitly calls for a grammar-aware,
+          Pāṇinian tokenizer. Does not build one. This proposal builds it.
+        </li>
+        <li>
+          <strong>Srikant et al., IntelliSys 2025</strong>
+          Argues for a Pāṇini-based AI model for Sanskrit. Makes the conceptual case
+          without implementing the tokenizer. Confirms the gap exists in the literature.
+        </li>
+        <li>
+          <strong>Gérard Huet — Heritage Platform (INRIA, 2009)</strong>
+          Pāṇini's grammar implemented as a working computational system. The morphological
+          analyzer that makes this tokenizer possible already exists. We are applying it
+          to ML pipelines, not rebuilding it.
+        </li>
+        <li>
+          <strong>Paul Kiparsky — "On the Architecture of Pāṇini's Grammar" (Springer, 2009)</strong>
+          Formal analysis showing Pāṇini's grammar is at least as powerful as modern
+          formal grammar frameworks — possibly Turing-equivalent. The theoretical
+          foundation for the completeness claim.
+        </li>
+        <li>
+          <strong>MorphPiece (2023)</strong>
+          Trained an LLM using morpheme-based tokens (not Pāṇini — general morphology).
+          Achieved comparable quality to standard GPT-2 at half the training cost.
+          The strongest proxy evidence that morpheme-aware tokenization improves LLM training.
+        </li>
+        <li>
+          <strong>SanskritShala — IIT Kharagpur (ACL 2023)</strong>
+          Published Sanskrit NLP tools including word segmentation and morphological analysis.
+          One of the tool sources for the proposed implementation.
+        </li>
+      </ul>
+
+      <p class="verified-note">
+        All citations manually verified. No AI-generated references.
+        If you find an error, write to contact@lzylabs.in.
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <span class="footer-glyph">&#x0938;&#x094D;&#x092B;&#x094B;&#x091F;</span>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="https://github.com/lzylabs/sansqrit" target="_blank">GitHub</a>
+        <a href="mailto:contact@lzylabs.in">Contact</a>
+      </div>
+      <p class="footer-note">
+        Spho&#7789;a (Sanskrit) &mdash; Bhartrihari's 5th-century concept of the
+        indivisible meaning-unit that "bursts" into phonemic expression.
+        This architecture proposes encoding at that level.
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
