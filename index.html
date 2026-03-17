@@ -22,7 +22,8 @@
       <button class="nav-hamburger" id="nav-toggle" aria-label="Menu">☰</button>
       <div class="nav-links-group" id="nav-links">
         <a href="proposal.html" class="nav-link">What is the Proposal? ↗</a>
-        <a href="https://github.com/lzylabs/sansqrit" target="_blank" class="nav-link">GitHub ↗</a>
+        <a href="https://github.com/lzylabs/sphota-architecture" target="_blank" class="nav-link">GitHub ↗</a>
+        <a href="https://huggingface.co/spaces/FoundersOfFuture/sphota-tokenizer" target="_blank" class="nav-link nav-demo">Try Demo ↗</a>
         <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">◐ Dark</button>
       </div>
     </div>
@@ -59,6 +60,7 @@
           </div>
         </div>
         <a href="proposal.html" class="scroll-cue">Read the proposal ↗</a>
+        <a href="https://huggingface.co/spaces/FoundersOfFuture/sphota-tokenizer" target="_blank" class="scroll-cue" style="margin-left: 40px;">Try the demo ↗</a>
       </div>
 
       <div class="hero-right">
@@ -89,7 +91,7 @@
         </div>
 
         <blockquote class="hero-quote">
-          "The most complete generative grammar of any language yet written."
+          "Sanskrit has the most complete generative grammar of any language yet written."
           <cite>— Paul Kiparsky, Stanford</cite>
         </blockquote>
       </div>
@@ -196,6 +198,33 @@
           </p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section class="section dark" id="demo">
+    <div class="container">
+      <span class="section-label">Live Demo</span>
+      <h2>See it work.</h2>
+      <p class="section-sub">
+        Type any Sanskrit word. The tokenizer splits it using Pāṇini's rules —
+        each token labelled with its grammatical role.
+      </p>
+      <div style="margin-top: 40px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+        <iframe
+          src="https://foundersoffuture-sphota-tokenizer.hf.space"
+          frameborder="0"
+          width="100%"
+          height="600"
+          style="display: block;"
+          title="Sphoṭa Tokenizer Demo"
+        ></iframe>
+      </div>
+      <p style="margin-top: 16px; font-size: 13px; color: var(--text-dimmer); text-align: center;">
+        Not loading?
+        <a href="https://huggingface.co/spaces/FoundersOfFuture/sphota-tokenizer" target="_blank"
+           style="color: var(--accent); text-decoration: none;">Open directly ↗</a>
+      </p>
     </div>
   </section>
 
@@ -437,14 +466,15 @@
       </p>
       <div class="collab-links">
         <a href="mailto:contact@lzylabs.in" class="btn">Write to Dheeraj ↗</a>
-        <a href="https://github.com/lzylabs/sansqrit" target="_blank" class="btn btn-ghost" style="margin-left: 8px;">Read the draft ↗</a>
+        <a href="https://huggingface.co/spaces/FoundersOfFuture/sphota-tokenizer" target="_blank" class="btn btn-ghost" style="margin-left: 8px;">Try the demo ↗</a>
+        <a href="https://github.com/lzylabs/sphota-architecture" target="_blank" class="btn btn-ghost" style="margin-left: 8px;">Read the draft ↗</a>
       </div>
     </div>
   </section>
 
   <!-- FOUNDER'S INTUITION -->
   <section class="section dark" id="intuition">
-    <div class="container">
+    <div class="container" style="font-size: 23px;">
       <span class="section-label" data-i18n="intuition-label">A Founder's Intuition</span>
       <h2 data-i18n="intuition-heading">What I hold beyond<br/>what I can prove.</h2>
       <p class="section-sub" data-i18n="intuition-sub">
