@@ -14,8 +14,13 @@ const PROGRESS = {
   a: [
     {
       status: 'done',
-      label: 'Idea & conception — Sanskrit\'s grammar as a formal AI substrate',
+      label: 'Seed insight — every Sanskrit sound carries meaning',
       date: 'July 2023',
+    },
+    {
+      status: 'done',
+      label: 'Idea crystallised — DeepSeek result connects Sanskrit token density to AI efficiency',
+      date: 'Jan 2025',
     },
     {
       status: 'done',
@@ -92,14 +97,17 @@ function initCanvasBg() {
   }
 
   function makeFirefly() {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 0.10 + 0.03;
     return {
       x: Math.random() * W,
       y: Math.random() * H,
       char: CHARS[Math.floor(Math.random() * CHARS.length)],
       size: Math.random() * 14 + 16,
       opacity: Math.random() * 0.06 + 0.02,
-      vx: (Math.random() - 0.5) * 0.2,
-      vy: (Math.random() - 0.5) * 0.2,
+      angle,
+      speed,
+      wanderRate: (Math.random() - 0.5) * 0.006,
       spotlight: false,
       spotOpacity: 0,
     };
@@ -131,23 +139,24 @@ function initCanvasBg() {
       const isSpot = f.spotlight;
 
       // Dim ambient drift for all chars
-      f.opacity = 0.05 + Math.sin(Date.now() * 0.0003 + i * 1.7) * 0.04;
+      f.opacity = 0.032 + Math.sin(Date.now() * 0.0003 + i * 1.7) * 0.026;
 
-      // Spotlight: fade in then hold then fade out via timer position
-      let spotO = 0;
+      // Spotlight: compute target opacity from timer, lerp toward it
+      let spotTarget = 0;
       if (isSpot) {
         const t = spotlightTimer / 220;
-        if (t < 0.25) spotO = t / 0.25;
-        else if (t < 0.75) spotO = 1;
-        else spotO = 1 - (t - 0.75) / 0.25;
-        f.spotOpacity = spotO;
+        if (t < 0.25) spotTarget = t / 0.25;
+        else if (t < 0.75) spotTarget = 1;
+        else spotTarget = 1 - (t - 0.75) / 0.25;
       }
+      f.spotOpacity += (spotTarget - f.spotOpacity) * 0.07;
+      const spotO = f.spotOpacity;
 
       const baseFont = `${f.size}px Georgia, serif`;
 
       ctx.save();
 
-      if (isSpot && spotO > 0.05) {
+      if (spotO > 0.01) {
         const isDarkMode = document.documentElement.dataset.theme === 'dark';
         // Light theme: deep red-orange bloom — contrasts against parchment
         // Dark theme: original warm amber bloom
@@ -181,7 +190,7 @@ function initCanvasBg() {
       } else {
         // Ambient dim state — color adapts to theme
         const isDark = document.documentElement.dataset.theme === 'dark';
-        const ambientColor = isDark ? '#c8a97a' : '#7A4810';
+        const ambientColor = isDark ? '#c8a97a' : '#C86428';
         ctx.globalAlpha = f.opacity;
         ctx.font = baseFont;
         ctx.fillStyle = ambientColor;
@@ -192,8 +201,9 @@ function initCanvasBg() {
 
       ctx.restore();
 
-      f.x += f.vx;
-      f.y += f.vy;
+      f.angle += f.wanderRate;
+      f.x += Math.cos(f.angle) * f.speed;
+      f.y += Math.sin(f.angle) * f.speed;
       if (f.x < -40) f.x = W + 40;
       if (f.x > W + 40) f.x = -40;
       if (f.y < -40) f.y = H + 40;
