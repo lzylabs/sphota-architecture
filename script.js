@@ -131,7 +131,7 @@ function initCanvasBg() {
       const isSpot = f.spotlight;
 
       // Dim ambient drift for all chars
-      f.opacity = 0.04 + Math.sin(Date.now() * 0.0003 + i * 1.7) * 0.03;
+      f.opacity = 0.05 + Math.sin(Date.now() * 0.0003 + i * 1.7) * 0.04;
 
       // Spotlight: fade in then hold then fade out via timer position
       let spotO = 0;
@@ -148,12 +148,19 @@ function initCanvasBg() {
       ctx.save();
 
       if (isSpot && spotO > 0.05) {
-        // Layered bloom: 4 passes — wide soft halo → mid glow → tight glow → sharp char
-        const passes = [
+        const isDarkMode = document.documentElement.dataset.theme === 'dark';
+        // Light theme: deep red-orange bloom — contrasts against parchment
+        // Dark theme: original warm amber bloom
+        const passes = isDarkMode ? [
           { blur: 90,  alpha: spotO * 0.12, color: '#e86020' },
           { blur: 55,  alpha: spotO * 0.25, color: '#f07830' },
           { blur: 28,  alpha: spotO * 0.45, color: '#f0a060' },
           { blur: 10,  alpha: spotO * 0.85, color: '#f8d080' },
+        ] : [
+          { blur: 90,  alpha: spotO * 0.12, color: '#CC5500' },
+          { blur: 55,  alpha: spotO * 0.24, color: '#DD7700' },
+          { blur: 28,  alpha: spotO * 0.39, color: '#EE9920' },
+          { blur: 10,  alpha: spotO * 0.54, color: '#F5BB40' },
         ];
         ctx.font = baseFont;
         for (const p of passes) {
@@ -164,18 +171,22 @@ function initCanvasBg() {
           ctx.fillText(f.char, f.x, f.y);
         }
         // Final crisp character on top
+        const finalColor = isDarkMode ? '#ffeebb' : '#BB5500';
+        const shadowColor = isDarkMode ? '#ffcc66' : '#DD7700';
         ctx.globalAlpha = Math.min(spotO * 1.1, 0.98);
-        ctx.fillStyle = '#ffeebb';
-        ctx.shadowColor = '#ffcc66';
+        ctx.fillStyle = finalColor;
+        ctx.shadowColor = shadowColor;
         ctx.shadowBlur = 6;
         ctx.fillText(f.char, f.x, f.y);
       } else {
-        // Ambient dim state
+        // Ambient dim state — color adapts to theme
+        const isDark = document.documentElement.dataset.theme === 'dark';
+        const ambientColor = isDark ? '#c8a97a' : '#7A4810';
         ctx.globalAlpha = f.opacity;
         ctx.font = baseFont;
-        ctx.fillStyle = '#c8a97a';
-        ctx.shadowColor = '#c8a97a';
-        ctx.shadowBlur = 8;
+        ctx.fillStyle = ambientColor;
+        ctx.shadowColor = ambientColor;
+        ctx.shadowBlur = isDark ? 8 : 4;
         ctx.fillText(f.char, f.x, f.y);
       }
 
@@ -382,26 +393,44 @@ function applyLang(lang) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Language (hidden switcher — preserved for future use)
   const saved = localStorage.getItem('sphota-lang') || 'en';
   applyLang(saved);
-
   document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      applyLang(btn.getAttribute('data-lang'));
+    btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang')));
+  });
+
+  // Theme toggle
+  const themeToggle = document.getElementById('theme-toggle');
+  const savedTheme = localStorage.getItem('sphota-theme') || 'light';
+  if (savedTheme === 'dark') {
+    document.documentElement.dataset.theme = 'dark';
+    if (themeToggle) themeToggle.textContent = '◑ Light';
+  }
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.dataset.theme === 'dark';
+      if (isDark) {
+        delete document.documentElement.dataset.theme;
+        themeToggle.textContent = '◐ Dark';
+        localStorage.setItem('sphota-theme', 'light');
+      } else {
+        document.documentElement.dataset.theme = 'dark';
+        themeToggle.textContent = '◑ Light';
+        localStorage.setItem('sphota-theme', 'dark');
+      }
     });
+  }
 
   // Hamburger menu
   const navToggle = document.getElementById('nav-toggle');
   const navLinksGroup = document.getElementById('nav-links');
   if (navToggle && navLinksGroup) {
-    navToggle.addEventListener('click', () => {
-      navLinksGroup.classList.toggle('open');
-    });
+    navToggle.addEventListener('click', () => navLinksGroup.classList.toggle('open'));
     document.addEventListener('click', (e) => {
       if (!navToggle.contains(e.target) && !navLinksGroup.contains(e.target)) {
         navLinksGroup.classList.remove('open');
       }
     });
   }
-  });
 });
